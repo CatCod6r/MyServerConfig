@@ -46,3 +46,13 @@ services:
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--storage.path=/alertmanager'
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    restart: unless-stopped
+    ports:
+      - "7070:8080"
+      - "50000:50000"
+    volumes:
+      - ./data/jenkins-data:/var/jenkins_home:rw
