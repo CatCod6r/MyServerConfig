@@ -13,7 +13,8 @@ pipeline {
             result: 'SUCCESS'
                     )
            }
-        }
+        echo 'should send message to webhook'
+      }
     }
   }
 }
