@@ -41,19 +41,19 @@ sudo chown -R 65534:65534 ./prometheus_data
 
 1. **Clone the repository:**  
 ```bash
-   git clone https://github.com/CatCod6r/MyServerConfig.git 
-   cd MyServerConfig
+git clone https://github.com/CatCod6r/MyServerConfig.git 
+cd MyServerConfig
 ```
 
 2. **Run the Initialization Script:**  
 ```bash
-   chmod +x setup.sh  
-   ./setup.sh
+chmod +x setup.sh  
+./setup.sh
 ```
 
 3. **Launch the stack:**  
 ```bash
-   docker compose up -d
+docker compose up -d
 ```
 
 ## **🤖 CI/CD Integration (Jenkins)**
