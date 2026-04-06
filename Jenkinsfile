@@ -4,7 +4,10 @@ pipeline {
     stage('says hewwo') {
       steps {
         echo 'hewwo'
-        
+      }
+    }  
+    stage('Send info to a discord') {
+      steps {
         withCredentials([string(credentialsId: 'DISCORD_WEBHOOK_URL', variable: 'DISCORD_URL')]) {
           discordSend (
             webhookURL: "${env.DISCORD_URL}",
