@@ -24,9 +24,20 @@ sudo systemctl restart nginx
 
 # Setting up alertmanager with env value of discord webhook
 sudo sed "s|DISCORD_WEBHOOK_URL|$DISCORD_WEBHOOK_URL|g" ./alertmanager/alertmanager.yml.tmp \
-  | sudo tee ./alertmanager/alertmanager.yml 
+  | sudo tee ./alertmanager/alertmanager.yml > /dev/null 2>&1
 
 # Configuring Let's Encrypt
 echo "Configuring Let's Encrypt"
 sudo certbot --nginx -n --agree-tos --email $YOURE_EMAIL -d $DOMAIN_NAME
 sudo systemctl enable certbot.timer
+
+# Rights
+# change directory data rights
+
+# stat -c '%g' /var/run/docker.sock
+# put it in .env  and use value in docker compose  jenkinks group_add: - VALUE
+DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)
+echo "DOCKER_GID=$DOCKER_GID" >> .env
+
+# setup wireguard users
+# id USER and put in docker compose

@@ -51,8 +51,11 @@ services:
     image: jenkins/jenkins:lts
     container_name: jenkins
     restart: unless-stopped
+    group_add:
+      - "${DOCKER_GID}"
     ports:
       - "7070:8080"
       - "50000:50000"
     volumes:
       - ./data/jenkins-data:/var/jenkins_home:rw
+      - /var/run/docker.sock:/var/run/docker.sock
