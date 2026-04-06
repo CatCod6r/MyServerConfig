@@ -1,52 +1,67 @@
-# 🛡️ VaultWarden-Deploy
-> **The one-command setup for a private, high-performance Vaultwarden instance on Ubuntu 24.04.**
+# MyServerConfig
 
+A containerized home server stack running on **Ubuntu**. This repository contains the orchestration and configuration files for a self-hosted CI/CD, monitoring, and password management environment.
 
-[![Ubuntu 24.04](https://img.shields.io/badge/OS-Ubuntu_24.04-orange?style=flat-square&logo=ubuntu)](https://ubuntu.com/)
-[![Docker](https://img.shields.io/badge/Docker-Compose-blue?style=flat-square&logo=docker)](https://www.docker.com/)
-[![Nginx](https://img.shields.io/badge/Proxy-Nginx-green?style=flat-square&logo=nginx)](https://nginx.org/)
+## 📂 Repository Structure
 
-## 📖 Overview
-This repository provides a streamlined, automated deployment for **Vaultwarden** (the lightweight Bitwarden-compatible server). It handles the configuration of an **Nginx Reverse Proxy**, secures the **Docker** environment, and provisions **Let's Encrypt SSL** certificates automatically.
+This repository contains the exact configuration files used to deploy the server stack:
 
-## 🛠️ Prerequisites
-* **OS:** Ubuntu 24.04 LTS
-* **Hardware:** Minimum 1GB RAM (2GB+ recommended)
-* **Network:** Ports **80** and **443** must be open.
-* **Domain:** A valid A-Record pointing to your VPS IP.
+* `alertmanager/` - Configuration files for Prometheus Alertmanager.
+* `prometheus/` - Configuration files and targets for Prometheus monitoring.
+* `docker-compose.yml` - The main stack orchestrator for all containerized services.
+* `Jenkinsfile` - The Multibranch Pipeline automation script for CI/CD.
+* `setup.sh` - Automation script for initial server environment setup.
+* `vaultwarden.conf` - Configuration/Proxy settings for the Vaultwarden service.
 
-## 🚀 Deployment Guide
+## 🚀 Services Overview
 
-### 1. Initialize Environment
-Export your configuration directly to your terminal session(or .env file in the same directory):
+| Service | Image | Internal Port | External Port |
+| :--- | :--- | :--- | :--- |
+| **Jenkins** | `jenkins/jenkins:lts` | 8080 | 8080 |
+| **Vaultwarden** | `vaultwarden/server:latest` | 80 | 8080 |
+| **Prometheus** | `prom/prometheus:latest` | 9090 | 9090 |
+| **Alertmanager** | `prom/alertmanager:latest` | 9093 | 9093 |
+| **Blackbox Exporter** | `prom/blackbox-exporter:latest` | 9115 | 9115 |
+| **WireGuard** | `lscr.io/linuxserver/wireguard:latest` | 51820/udp | 51820/udp |
 
-```bash
-# Your target domain
-export DOMAIN_NAME="vault.yourdomain.com"
+## 🛠 Prerequisites
 
-# Email for SSL registration
-export YOURE_EMAIL="admin@yourdomain.com"
-
-# Secure Admin Token (Argon2 formatted)
-export VAULTWARDEN_ADMIN_TOKEN=$(echo -n "YourSecret" | argon2 "$(openssl rand -base64 32)" -e -id -k 65540 -t 3 -p 4 | sed 's#\$#\$$#g')
-```
-
-### 2. Run Setup
-Clone the repository and execute the automation script:
+### Permission Configuration
+Before starting the stack, ensure the correct ownership for the mounted volumes on the Ubuntu host to prevent "Permission Denied" errors in Docker:
 
 ```bash
-git clone https://github.com/CatCod6r/VaultWardenScript.git
-cd VaultWardenScript
-chmod +x setup.sh
-./setup.sh
+# Jenkins (Default UID 1000)
+sudo chown -R 1000:1000 ./jenkins_data
+
+# Prometheus (Default UID 65534)
+sudo chown -R 65534:65534 ./prometheus_data
 ```
 
-### 3. Verification
-Once finished, your vault is live at:
-* **Vault UI:** `https://your.domain.com`
-* **Admin Panel:** `https://your.domain.com/admin`
+## **📦 Deployment**
 
-## 🤝 Troubleshooting
-If port 80 or 443 is already in use, run:
-`sudo systemctl stop nginx && sudo fuser -k 80/tcp 443/tcp`
-Then re-run the setup.
+1. **Clone the repository:**  
+```bash
+   git clone https://github.com/CatCod6r/MyServerConfig.git 
+   cd MyServerConfig
+```
+
+2. **Run the Initialization Script:**  
+```bash
+   chmod +x setup.sh  
+   ./setup.sh
+```
+
+3. **Launch the stack:**  
+```bash
+   docker compose up -d
+```
+
+## **🤖 CI/CD Integration (Jenkins)**
+
+The included Jenkinsfile is configured for a **Multibranch Pipeline**.
+
+* **Discord Notifications:** Uses withCredentials to securely pull the DISCORD\_WEBHOOK\_URL and send build status alerts.  
+* **Automated Triggering:** Handled via GitHub Webhooks pointing to /github-webhook/ or via Multibranch SCM Polling.  
+* **Agent Environment:** Uses standard agent any for pipeline execution.
+
+---
