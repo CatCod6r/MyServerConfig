@@ -33,6 +33,8 @@ sudo systemctl enable certbot.timer
 
 # Rights
 # change directory data rights
+sudo chown -R 1000:1000 ./data/jenkins_data
+sudo chown -R 65534:65534 ./data/prometheus_data
 
 # stat -c '%g' /var/run/docker.sock
 # put it in .env  and use value in docker compose  jenkinks group_add: - VALUE
