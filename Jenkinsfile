@@ -94,7 +94,7 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'DISCORD_WEBHOOK_URL', variable: 'DISCORD_URL')]) {
           discordSend (
-            webhookURL: "${env.DISCORD_URL}",
+            webhookURL: env.DISCORD_URL,
             title: "Build Started",
             description: "Job: ${env.JOB_NAME} [Build #${env.BUILD_NUMBER}]",
             result: 'SUCCESS'
@@ -109,7 +109,7 @@ pipeline {
     failure {
       withCredentials([string(credentialsId: 'DISCORD_WEBHOOK_URL', variable: 'DISCORD_URL')]) {
         discordSend (
-          webhookURL: "${env.DISCORD_URL}",
+          webhookURL: env.DISCORD_URL,
           title: "Build FAILED ❌",
           description: "Tests failed on Job: ${env.JOB_NAME} [Build #${env.BUILD_NUMBER}]\nCheck Jenkins console output.",
           result: 'FAILURE'
