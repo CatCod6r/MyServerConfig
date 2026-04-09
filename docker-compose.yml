@@ -78,3 +78,4 @@ services:
     volumes:
       - ./data/jenkins-data:/var/jenkins_home:rw
       - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker:ro
