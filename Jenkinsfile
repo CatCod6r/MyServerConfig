@@ -17,14 +17,16 @@ pipeline {
       steps {
         echo 'Downloading standalone testing tools into workspace...'
         sh '''
-          # Create a local bin directory in the Jenkins workspace
           mkdir -p bin
           
           # 1. Download ShellCheck
           if [ ! -f bin/shellcheck ]; then
             echo "Downloading ShellCheck..."
             curl -sSLO https://github.com/koalaman/shellcheck/releases/download/v0.10.0/shellcheck-v0.10.0.linux.x86_64.tar.xz
-            tar -xJf shellcheck-v0.10.0.linux.x86_64.tar.xz
+            
+            # EXTRACT WITH PYTHON INSTEAD OF TAR (Bypasses the missing xz utility)
+            python3 -c "import tarfile; tarfile.open('shellcheck-v0.10.0.linux.x86_64.tar.xz').extractall()"
+            
             mv shellcheck-v0.10.0/shellcheck bin/
             rm -rf shellcheck-v0.10.0*
           fi
@@ -38,14 +40,14 @@ pipeline {
             rm -rf prometheus-2.53.0*
           fi
 
-          # 3. Download standalone Docker Compose binary (for syntax checking)
+          # 3. Download standalone Docker Compose binary
           if [ ! -f bin/docker-compose ]; then
             echo "Downloading Docker Compose..."
             curl -sSL https://github.com/docker/compose/releases/download/v2.29.1/docker-compose-linux-x86_64 -o bin/docker-compose
             chmod +x bin/docker-compose
           fi
 
-          # 4. Download yq (standalone Go binary for YAML linting/parsing)
+          # 4. Download yq (standalone Go binary for YAML linting)
           if [ ! -f bin/yq ]; then
             echo "Downloading yq..."
             curl -sSL https://github.com/mikefarah/yq/releases/download/v4.44.2/yq_linux_amd64 -o bin/yq
@@ -53,11 +55,9 @@ pipeline {
           fi
           
           echo "All tools installed in ${WORKSPACE}/bin"
-          shellcheck --version
         '''
       }
     }
-
     stage('Linting: YAML') {
       steps {
         echo 'Validating all YAML files with yq...'
