@@ -9,18 +9,6 @@ pipeline {
   }
 
   stages {
-    stage('Setup Dependencies') {
-      steps {
-        echo 'Installing CI tools via Alpine Package Manager (apk)...'
-        // Alpine uses 'apk' instead of 'apt-get'. It is lightning fast.
-        sh '''
-          apk update
-          # Install everything we need in one simple command!
-          apk add shellcheck prometheus docker-cli docker-cli-compose yq curl
-        '''
-      }
-    }
-
     stage('Linting: YAML') {
       steps {
         echo 'Validating all YAML files with yq...'
