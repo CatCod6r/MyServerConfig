@@ -1,0 +1,18 @@
+# Use the official lightweight Jenkins Alpine agent
+FROM jenkins/inbound-agent:alpine
+
+# Switch to root to install packages
+USER root
+
+# Install all the CI/CD tools using Alpine's blazing-fast package manager
+RUN apk update && \
+    apk add --no-cache \
+    shellcheck \
+    prometheus \
+    docker-cli \
+    docker-cli-compose \
+    yq \
+    curl
+
+# Switch back to the standard jenkins user for security
+USER jenkins

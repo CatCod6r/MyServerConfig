@@ -15,7 +15,6 @@ fi
 
 # Configuring nginx
 echo "Configuring nginx"
-
 sudo sed "s|DOMAIN_NAME|$DOMAIN_NAME|g" ./vaultwarden.conf \
   | sudo tee /etc/nginx/sites-available/vaultwarden.conf
 sudo ln -s /etc/nginx/sites-available/vaultwarden.conf /etc/nginx/sites-enabled/
@@ -41,5 +40,6 @@ sudo chown -R 65534:65534 ./data/prometheus_data
 DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)
 echo "DOCKER_GID=$DOCKER_GID" >> .env
 
-# setup wireguard users
-# id USER and put in docker compose
+# Building docker image for jenkins
+docker build -t alpine-testing:latest -f Dockerfile.agent .
+#Also add to readmy that you must use this image for jenkins pipeline

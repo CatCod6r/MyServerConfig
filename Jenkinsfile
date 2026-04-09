@@ -1,13 +1,5 @@
 pipeline {
-  // Tell Jenkins to spin up an Alpine container for this pipeline
-  agent {
-    docker { 
-      image 'alpine:latest' 
-      // If you need the docker command inside this container to test docker-compose, 
-      // you must mount the host's docker socket here:
-      args '-v /var/run/docker.sock:/var/run/docker.sock'
-    }
-  }
+  agent { label 'docker-worker' }
   
   environment {
     DOMAIN_NAME = "test.local"
