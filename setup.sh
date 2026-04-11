@@ -27,7 +27,7 @@ sudo sed "s|DISCORD_WEBHOOK_URL|$DISCORD_WEBHOOK_URL|g" ./alertmanager/alertmana
 
 # Configuring Let's Encrypt
 echo "Configuring Let's Encrypt"
-sudo certbot --nginx -n --agree-tos --email $YOURE_EMAIL -d $DOMAIN_NAME
+sudo certbot --nginx -n --agree-tos --email "$YOURE_EMAIL" -d "$DOMAIN_NAME"
 sudo systemctl enable certbot.timer
 
 # Rights
